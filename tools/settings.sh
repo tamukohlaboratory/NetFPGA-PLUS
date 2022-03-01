@@ -23,9 +23,9 @@
 # @NETFPGA_LICENSE_HEADER_END@
 #
 ### User defined
-export NFPLUS_FOLDER=${HOME}/NetFPGA-PLUS
-export BOARD_NAME=au250
-export NF_PROJECT_NAME=reference_switch
+export NFPLUS_FOLDER=${HOME}/Projects/NetFPGA-PLUS
+export BOARD_NAME=vcu1525
+export NF_PROJECT_NAME=switch_microblaze
 export PYTHON_BNRY=/usr/bin/python3
 
 ### Don't change
