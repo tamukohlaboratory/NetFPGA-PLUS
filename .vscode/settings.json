@@ -1,3 +1,9 @@
 {
-	"makefile.extensionOutputFolder": "./.vscode"
+	"makefile.extensionOutputFolder": "./.vscode",
+	"files.associations": {
+		"*.svh": "systemverilog",
+		"xil_printf.h": "c",
+		"mb_interface.h": "c",
+		"xparameters.h": "c"
+	}
 }

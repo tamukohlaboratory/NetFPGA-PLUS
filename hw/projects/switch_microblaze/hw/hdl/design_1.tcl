@@ -209,10 +209,9 @@ proc create_hier_cell_shared_memory { parentCell nameHier } {
 
 
   # Create pins
-  create_bd_pin -dir I -type clk ACLK
-  create_bd_pin -dir I -type rst ARESETN
   create_bd_pin -dir I -type clk axi_aclk
   create_bd_pin -dir I -type rst axi_aresetn
+  create_bd_pin -dir I -type clk s_axi_aclk
   create_bd_pin -dir I -type rst s_axi_aresetn
 
   # Create instance: axi_bram_ctrl_0, and set properties
@@ -220,14 +219,16 @@ proc create_hier_cell_shared_memory { parentCell nameHier } {
   set_property -dict [ list \
    CONFIG.ECC_TYPE {0} \
    CONFIG.PROTOCOL {AXI4LITE} \
+   CONFIG.SINGLE_PORT_BRAM {1} \
  ] $axi_bram_ctrl_0
 
-  # Create instance: axi_interconnect_0, and set properties
-  set axi_interconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0 ]
+  # Create instance: axi_bram_ctrl_1, and set properties
+  set axi_bram_ctrl_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.1 axi_bram_ctrl_1 ]
   set_property -dict [ list \
-   CONFIG.NUM_MI {1} \
-   CONFIG.NUM_SI {2} \
- ] $axi_interconnect_0
+   CONFIG.ECC_TYPE {0} \
+   CONFIG.PROTOCOL {AXI4LITE} \
+   CONFIG.SINGLE_PORT_BRAM {1} \
+ ] $axi_bram_ctrl_1
 
   # Create instance: blk_mem_gen_0, and set properties
   set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 blk_mem_gen_0 ]
@@ -241,18 +242,16 @@ proc create_hier_cell_shared_memory { parentCell nameHier } {
  ] $blk_mem_gen_0
 
   # Create interface connections
-  connect_bd_intf_net -intf_net S00_AXI_1 [get_bd_intf_pins S00_AXI] [get_bd_intf_pins axi_interconnect_0/S00_AXI]
-  connect_bd_intf_net -intf_net S01_AXI_1 [get_bd_intf_pins S01_AXI] [get_bd_intf_pins axi_interconnect_0/S01_AXI]
+  connect_bd_intf_net -intf_net S00_AXI_1 [get_bd_intf_pins S00_AXI] [get_bd_intf_pins axi_bram_ctrl_0/S_AXI]
+  connect_bd_intf_net -intf_net S01_AXI_1 [get_bd_intf_pins S01_AXI] [get_bd_intf_pins axi_bram_ctrl_1/S_AXI]
   connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
-  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTB [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTB] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTB]
-  connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_pins axi_interconnect_0/M00_AXI]
+  connect_bd_intf_net -intf_net axi_bram_ctrl_1_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_1/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTB]
 
   # Create port connections
-  connect_bd_net -net ACLK_1 [get_bd_pins ACLK] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/S01_ACLK]
-  connect_bd_net -net ARESETN_1 [get_bd_pins ARESETN] [get_bd_pins axi_interconnect_0/ARESETN]
-  connect_bd_net -net S00_ACLK_1 [get_bd_pins axi_aclk] [get_bd_pins axi_interconnect_0/S00_ACLK]
-  connect_bd_net -net S00_ARESETN_1 [get_bd_pins axi_aresetn] [get_bd_pins axi_interconnect_0/S00_ARESETN]
-  connect_bd_net -net s_axi_aresetn_1 [get_bd_pins s_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/S01_ARESETN]
+  connect_bd_net -net axi_aclk_1 [get_bd_pins axi_aclk] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk]
+  connect_bd_net -net axi_aresetn_1 [get_bd_pins axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn]
+  connect_bd_net -net s_axi_aclk_1 [get_bd_pins s_axi_aclk] [get_bd_pins axi_bram_ctrl_1/s_axi_aclk]
+  connect_bd_net -net s_axi_aresetn_1 [get_bd_pins s_axi_aresetn] [get_bd_pins axi_bram_ctrl_1/s_axi_aresetn]
 
   # Restore current instance
   current_bd_instance $oldCurInst
@@ -387,7 +386,7 @@ proc create_root_design { parentCell } {
   # Create interface ports
   set M0_AXIS [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 M0_AXIS ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {360000000} \
+   CONFIG.FREQ_HZ {340000000} \
    ] $M0_AXIS
 
   set S00_AXI [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:aximm_rtl:1.0 S00_AXI ]
@@ -397,7 +396,7 @@ proc create_root_design { parentCell } {
    CONFIG.AWUSER_WIDTH {0} \
    CONFIG.BUSER_WIDTH {0} \
    CONFIG.DATA_WIDTH {32} \
-   CONFIG.FREQ_HZ {360000000} \
+   CONFIG.FREQ_HZ {340000000} \
    CONFIG.HAS_BRESP {1} \
    CONFIG.HAS_BURST {1} \
    CONFIG.HAS_CACHE {1} \
@@ -424,7 +423,7 @@ proc create_root_design { parentCell } {
 
   set S0_AXIS [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S0_AXIS ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {360000000} \
+   CONFIG.FREQ_HZ {340000000} \
    CONFIG.HAS_TKEEP {1} \
    CONFIG.HAS_TLAST {1} \
    CONFIG.HAS_TREADY {1} \
@@ -438,7 +437,7 @@ proc create_root_design { parentCell } {
 
 
   # Create ports
-  set axi_aclk [ create_bd_port -dir I -type clk -freq_hz 360000000 axi_aclk ]
+  set axi_aclk [ create_bd_port -dir I -type clk -freq_hz 340000000 axi_aclk ]
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S00_AXI} \
  ] $axi_aclk
@@ -446,7 +445,7 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.POLARITY {ACTIVE_LOW} \
  ] $axi_aresetn
-  set axis_aclk [ create_bd_port -dir I -type clk -freq_hz 360000000 axis_aclk ]
+  set axis_aclk [ create_bd_port -dir I -type clk -freq_hz 340000000 axis_aclk ]
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S0_AXIS:M0_AXIS} \
  ] $axis_aclk
@@ -510,11 +509,15 @@ proc create_root_design { parentCell } {
   # Create instance: clk_wiz_0, and set properties
   set clk_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz_0 ]
   set_property -dict [ list \
-   CONFIG.CLKOUT1_JITTER {159.184} \
-   CONFIG.CLKOUT1_PHASE_ERROR {303.823} \
-   CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {500.000} \
-   CONFIG.MMCM_CLKFBOUT_MULT_F {59.375} \
-   CONFIG.MMCM_CLKOUT0_DIVIDE_F {2.375} \
+   CONFIG.CLKIN1_JITTER_PS {29.41} \
+   CONFIG.CLKOUT1_JITTER {163.439} \
+   CONFIG.CLKOUT1_PHASE_ERROR {309.209} \
+   CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {400.000} \
+   CONFIG.MMCM_CLKFBOUT_MULT_F {60.000} \
+   CONFIG.MMCM_CLKIN1_PERIOD {2.941} \
+   CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.000} \
+   CONFIG.MMCM_DIVCLK_DIVIDE {17} \
+   CONFIG.PRIM_IN_FREQ {340} \
  ] $clk_wiz_0
 
   # Create instance: mdm_1, and set properties
@@ -532,6 +535,7 @@ proc create_root_design { parentCell } {
   # Create instance: microblaze_0, and set properties
   set microblaze_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:microblaze:11.0 microblaze_0 ]
   set_property -dict [ list \
+   CONFIG.C_AREA_OPTIMIZED {2} \
    CONFIG.C_DEBUG_ENABLED {2} \
    CONFIG.C_D_AXI {1} \
    CONFIG.C_D_LMB {1} \
@@ -606,13 +610,13 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net processor_M0_AXIS [get_bd_intf_ports M0_AXIS] [get_bd_intf_pins axis_clock_converter_1/M_AXIS]
 
   # Create port connections
-  connect_bd_net -net ARESETN_1 [get_bd_pins microblaze_0_axi_periph/ARESETN] [get_bd_pins rst_wiz_0/interconnect_aresetn] [get_bd_pins shared_memory/ARESETN]
+  connect_bd_net -net ARESETN_1 [get_bd_pins microblaze_0_axi_periph/ARESETN] [get_bd_pins rst_wiz_0/interconnect_aresetn]
   connect_bd_net -net SYS_Rst_1 [get_bd_pins microblaze_0_local_memory/SYS_Rst] [get_bd_pins rst_wiz_0/bus_struct_reset]
   connect_bd_net -net axi_aclk_1 [get_bd_ports axi_aclk] [get_bd_pins shared_memory/axi_aclk]
   connect_bd_net -net axi_aresetn_1 [get_bd_ports axi_aresetn] [get_bd_pins shared_memory/axi_aresetn]
   connect_bd_net -net axi_timer_0_interrupt [get_bd_pins axi_timer_0/interrupt] [get_bd_pins microblaze_0_xlconcat/In1]
   connect_bd_net -net clk_in1_0_1 [get_bd_ports axis_aclk] [get_bd_pins axis_clock_converter_0/s_axis_aclk] [get_bd_pins axis_clock_converter_1/m_axis_aclk] [get_bd_pins clk_wiz_0/clk_in1]
-  connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins axis_clock_converter_0/m_axis_aclk] [get_bd_pins axis_clock_converter_1/s_axis_aclk] [get_bd_pins axis_dwidth_converter_0/aclk] [get_bd_pins axis_dwidth_converter_1/aclk] [get_bd_pins axis_subset_converter_0/aclk] [get_bd_pins axis_subset_converter_1/aclk] [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins mdm_1/M_AXI_ACLK] [get_bd_pins mdm_1/S_AXI_ACLK] [get_bd_pins microblaze_0/Clk] [get_bd_pins microblaze_0_axi_intc/processor_clk] [get_bd_pins microblaze_0_axi_intc/s_axi_aclk] [get_bd_pins microblaze_0_axi_periph/ACLK] [get_bd_pins microblaze_0_axi_periph/M00_ACLK] [get_bd_pins microblaze_0_axi_periph/M01_ACLK] [get_bd_pins microblaze_0_axi_periph/M02_ACLK] [get_bd_pins microblaze_0_axi_periph/M03_ACLK] [get_bd_pins microblaze_0_axi_periph/S00_ACLK] [get_bd_pins microblaze_0_axi_periph/S01_ACLK] [get_bd_pins microblaze_0_local_memory/LMB_Clk] [get_bd_pins rst_wiz_0/slowest_sync_clk] [get_bd_pins shared_memory/ACLK]
+  connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins axis_clock_converter_0/m_axis_aclk] [get_bd_pins axis_clock_converter_1/s_axis_aclk] [get_bd_pins axis_dwidth_converter_0/aclk] [get_bd_pins axis_dwidth_converter_1/aclk] [get_bd_pins axis_subset_converter_0/aclk] [get_bd_pins axis_subset_converter_1/aclk] [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins mdm_1/M_AXI_ACLK] [get_bd_pins mdm_1/S_AXI_ACLK] [get_bd_pins microblaze_0/Clk] [get_bd_pins microblaze_0_axi_intc/processor_clk] [get_bd_pins microblaze_0_axi_intc/s_axi_aclk] [get_bd_pins microblaze_0_axi_periph/ACLK] [get_bd_pins microblaze_0_axi_periph/M00_ACLK] [get_bd_pins microblaze_0_axi_periph/M01_ACLK] [get_bd_pins microblaze_0_axi_periph/M02_ACLK] [get_bd_pins microblaze_0_axi_periph/M03_ACLK] [get_bd_pins microblaze_0_axi_periph/S00_ACLK] [get_bd_pins microblaze_0_axi_periph/S01_ACLK] [get_bd_pins microblaze_0_local_memory/LMB_Clk] [get_bd_pins rst_wiz_0/slowest_sync_clk] [get_bd_pins shared_memory/s_axi_aclk]
   connect_bd_net -net clk_wiz_0_locked [get_bd_pins clk_wiz_0/locked] [get_bd_pins rst_wiz_0/dcm_locked]
   connect_bd_net -net mdm_1_Debug_SYS_Rst [get_bd_pins mdm_1/Debug_SYS_Rst] [get_bd_pins rst_wiz_0/mb_debug_sys_rst]
   connect_bd_net -net mdm_1_Interrupt [get_bd_pins mdm_1/Interrupt] [get_bd_pins microblaze_0_xlconcat/In0]
@@ -623,12 +627,12 @@ proc create_root_design { parentCell } {
   connect_bd_net -net util_vector_logic_0_Res [get_bd_pins clk_wiz_0/reset] [get_bd_pins util_vector_logic_0/Res]
 
   # Create address segments
-  assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces mdm_1/Data] [get_bd_addr_segs shared_memory/axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces mdm_1/Data] [get_bd_addr_segs shared_memory/axi_bram_ctrl_1/S_AXI/Mem0] -force
   assign_bd_address -offset 0x41C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces mdm_1/Data] [get_bd_addr_segs axi_timer_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces mdm_1/Data] [get_bd_addr_segs microblaze_0_local_memory/dlmb_bram_if_cntlr/SLMB1/Mem] -force
   assign_bd_address -offset 0x41400000 -range 0x00001000 -target_address_space [get_bd_addr_spaces mdm_1/Data] [get_bd_addr_segs mdm_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x41200000 -range 0x00010000 -target_address_space [get_bd_addr_spaces mdm_1/Data] [get_bd_addr_segs microblaze_0_axi_intc/S_AXI/Reg] -force
-  assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces microblaze_0/Data] [get_bd_addr_segs shared_memory/axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces microblaze_0/Data] [get_bd_addr_segs shared_memory/axi_bram_ctrl_1/S_AXI/Mem0] -force
   assign_bd_address -offset 0x41C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_0/Data] [get_bd_addr_segs axi_timer_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_0/Data] [get_bd_addr_segs microblaze_0_local_memory/dlmb_bram_if_cntlr/SLMB/Mem] -force
   assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_0/Instruction] [get_bd_addr_segs microblaze_0_local_memory/ilmb_bram_if_cntlr/SLMB/Mem] -force
@@ -640,6 +644,7 @@ proc create_root_design { parentCell } {
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
@@ -651,6 +656,4 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
-
-common::send_gid_msg -ssname BD::TCL -id 2053 -severity "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

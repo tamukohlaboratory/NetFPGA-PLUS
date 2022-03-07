@@ -387,6 +387,7 @@ set_property generate_synth_checkpoint false [get_files clk_wiz_1.xci]
 reset_target all [get_ips clk_wiz_1]
 generate_target all [get_ips clk_wiz_1]
 
+#Adding source files
 source "./hdl/design_1.tcl"
 read_verilog     "./hdl/nf_datapath.v"
 read_verilog     "${public_repo_dir}/common/hdl/top.v"
@@ -434,5 +435,34 @@ puts "    Synth time    : ${elapsed_time}"
 puts "    Timing Closure: ${timing_report}"
 puts "${timing_report_data}"
 
-exit
+#Create software
+set platform_name design_1
+set repo_directory ip_repo
+set sdk_directory project/${design}.sdk
+file mkdir $sdk_directory
+write_hw_platform -fixed -include_bit -force -file $sdk_directory/$platform_name.xsa
 
+set xsct_filename ctrl/${design}_xsct.tcl
+set env(_JAVA_OPTIONS) "-Duser.home=[pwd]"
+set xsct_options "-no-ini $xsct_filename $platform_name $repo_directory $sdk_directory >& $sdk_directory/xsct.log -"
+if { [catch { exec xsct {*}$xsct_options } errmsg ] } {
+	puts "Failed to execute xsct to create and build software: \"$errmsg\", please check $sdk_directory/xsct.log for more details."
+}
+
+# Associate ELF file and add MEM files to project
+set elf_filename "$sdk_directory/${platform_name}_control/Debug/${platform_name}_control.elf"
+if {[file exists $elf_filename]} {
+	add_files -fileset sources_1 -norecurse -force $elf_filename
+	add_files -fileset sim_1 -norecurse -force $elf_filename
+
+	set_property SCOPED_TO_REF ${platform_name}_i [get_files -all -of_objects [get_fileset sources_1] $elf_filename]
+	set_property SCOPED_TO_CELLS { /microblaze_0 } [get_files -all -of_objects [get_fileset sources_1] $elf_filename]
+	set_property SCOPED_TO_REF ${platform_name}_i [get_files -all -of_objects [get_fileset sim_1] $elf_filename]
+	set_property SCOPED_TO_CELLS { /microblaze_0 } [get_files -all -of_objects [get_fileset sim_1] $elf_filename]
+
+	export_ip_user_files -quiet
+	set memfiles [glob -nocomplain */sim_scripts/${platform_name}_i/*/*.mem]
+	add_files -quiet -fileset sim_1 -norecurse $memfiles
+}
+
+exit
