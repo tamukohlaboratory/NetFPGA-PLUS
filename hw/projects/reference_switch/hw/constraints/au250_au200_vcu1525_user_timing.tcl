@@ -23,7 +23,7 @@
 # @NETFPGA_LICENSE_HEADER_END@
 #
 
-create_pblock pblock_nf_datapath
-add_cells_to_pblock [get_pblocks pblock_nf_datapath] [get_cells -quiet [list nf_datapath_0]]
-add_cells_to_pblock [get_pblocks pblock_nf_datapath] [get_cells -quiet [list u_top_wrapper/u_nf_attachment]]
-resize_pblock [get_pblocks pblock_nf_datapath] -add {SLR2}
+# create_pblock pblock_nf_datapath
+# add_cells_to_pblock [get_pblocks pblock_nf_datapath] [get_cells -quiet [list nf_datapath_0]]
+# add_cells_to_pblock [get_pblocks pblock_nf_datapath] [get_cells -quiet [list u_top_wrapper/u_nf_attachment]]
+# resize_pblock [get_pblocks pblock_nf_datapath] -add {SLR2}

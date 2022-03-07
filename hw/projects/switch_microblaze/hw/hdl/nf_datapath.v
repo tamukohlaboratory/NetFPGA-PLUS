@@ -157,10 +157,8 @@ module nf_datapath #(
     output [C_M_AXIS_TUSER_WIDTH-1:0]          m_axis_2_tuser,
     output                                     m_axis_2_tvalid,
     input                                      m_axis_2_tready,
-    output                                     m_axis_2_tlast,
+    output                                     m_axis_2_tlast
 
-    input                                      rs232_uart_rxd,
-    input                                      rs232_uart_txd
     );
     
     //internal connectivity
@@ -231,44 +229,43 @@ module nf_datapath #(
     
     
      //Output Port Lookup  
-     design_1 design_1_i (
-    .axis_aclk(axis_aclk),
-    .axis_resetn(axis_resetn),
-    .S0_AXIS_tdata(s_axis_opl_tdata),
-    .S0_AXIS_tkeep(s_axis_opl_tkeep),
-    .S0_AXIS_tuser(s_axis_opl_tuser),
-    .S0_AXIS_tvalid(s_axis_opl_tvalid),
-    .S0_AXIS_tready(s_axis_opl_tready),
-    .S0_AXIS_tlast(s_axis_opl_tlast),
-    .M0_AXIS_tdata(m_axis_opl_tdata),
-    .M0_AXIS_tkeep(m_axis_opl_tkeep),
-    .M0_AXIS_tuser(m_axis_opl_tuser),
-    .M0_AXIS_tvalid(m_axis_opl_tvalid),
-    .M0_AXIS_tready(m_axis_opl_tready),
-    .M0_AXIS_tlast(m_axis_opl_tlast),
-    .axi_aclk(axi_aclk),
-    .axi_aresetn(axi_aresetn),
-    .S00_AXI_awaddr(S1_AXI_AWADDR),
-    .S00_AXI_awvalid(S1_AXI_AWVALID),
-    .S00_AXI_wdata(S1_AXI_WDATA),
-    .S00_AXI_wstrb(S1_AXI_WSTRB),
-    .S00_AXI_wvalid(S1_AXI_WVALID),
-    .S00_AXI_bready(S1_AXI_BREADY),
-    .S00_AXI_araddr(S1_AXI_ARADDR),
-    .S00_AXI_arvalid(S1_AXI_ARVALID),
-    .S00_AXI_rready(S1_AXI_RREADY),
-    .S00_AXI_arready(S1_AXI_ARREADY),
-    .S00_AXI_rdata(S1_AXI_RDATA),
-    .S00_AXI_rresp(S1_AXI_RRESP),
-    .S00_AXI_rvalid(S1_AXI_RVALID),
-    .S00_AXI_wready(S1_AXI_WREADY),
-    .S00_AXI_bresp(S1_AXI_BRESP),
-    .S00_AXI_bvalid(S1_AXI_BVALID),
-    .S00_AXI_awready(S1_AXI_AWREADY)
+       design_1 design_1_i (
+      .axis_aclk(axis_aclk),
+      .axis_resetn(axis_resetn),
+      .M0_AXIS_tdata(m_axis_opl_tdata),
+      .M0_AXIS_tkeep(m_axis_opl_tkeep),
+      .M0_AXIS_tuser(m_axis_opl_tuser),
+      .M0_AXIS_tvalid(m_axis_opl_tvalid),
+      .M0_AXIS_tready(m_axis_opl_tready),
+      .M0_AXIS_tlast(m_axis_opl_tlast),
+      .S0_AXIS_tdata(s_axis_opl_tdata),
+      .S0_AXIS_tkeep(s_axis_opl_tkeep),
+      .S0_AXIS_tuser(s_axis_opl_tuser),
+      .S0_AXIS_tvalid(s_axis_opl_tvalid),
+      .S0_AXIS_tready(s_axis_opl_tready),
+      .S0_AXIS_tlast(s_axis_opl_tlast),
+      .axi_aclk(axi_aclk),
+      .axi_aresetn(axi_resetn),
+      .S00_AXI_awaddr(S1_AXI_AWADDR),
+      .S00_AXI_awvalid(S1_AXI_AWVALID),
+      .S00_AXI_wdata(S1_AXI_WDATA),
+      .S00_AXI_wstrb(S1_AXI_WSTRB),
+      .S00_AXI_wvalid(S1_AXI_WVALID),
+      .S00_AXI_bready(S1_AXI_BREADY),
+      .S00_AXI_araddr(S1_AXI_ARADDR),
+      .S00_AXI_arvalid(S1_AXI_ARVALID),
+      .S00_AXI_rready(S1_AXI_RREADY),
+      .S00_AXI_arready(S1_AXI_ARREADY),
+      .S00_AXI_rdata(S1_AXI_RDATA),
+      .S00_AXI_rresp(S1_AXI_RRESP),
+      .S00_AXI_rvalid(S1_AXI_RVALID),
+      .S00_AXI_wready(S1_AXI_WREADY),
+      .S00_AXI_bresp(S1_AXI_BRESP),
+      .S00_AXI_bvalid(S1_AXI_BVALID),
+      .S00_AXI_awready(S1_AXI_AWREADY)
   );
 
 
-       
       //Output queues
        output_queues_ip  bram_output_queues_1 (
       .axis_aclk(axis_aclk), 
