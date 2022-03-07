@@ -42,7 +42,7 @@ set_param synth.elaboration.rodinMoreOptions "rt::set_parameter max_loop_limit 2
 # Design Parameters on NF_DATAPATH
 #####################################
 set datapath_width_bit    1024
-set datapath_freq_mhz     340
+set datapath_freq_mhz     300
 set opl_bcam_size         16
 
 set opl_cam_depth_bits    [expr int(log(${opl_bcam_size})/log(2))]
@@ -395,11 +395,11 @@ read_verilog -sv "${public_repo_dir}/common/hdl/top_wrapper.sv"
 read_verilog -sv "${public_repo_dir}/common/hdl/nf_attachment.sv"
 
 #Setting Synthesis options
-create_run -flow {Vivado Synthesis 2020} synth
+create_run -flow {Vivado Synthesis 2020} synth_1
 set_property write_incremental_synth_checkpoint true [get_runs synth_1]
 set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs synth_1]
 #Setting Implementation options
-create_run impl -parent_run synth -flow {Vivado Implementation 2020}
+create_run impl -parent_run synth_1 -flow {Vivado Implementation 2020}
 set_property strategy Performance_ExplorePostRoutePhysOpt [get_runs impl_1]
 set_property steps.phys_opt_design.is_enabled true [get_runs impl_1]
 set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE ExploreWithHoldFix [get_runs impl_1]
@@ -409,8 +409,8 @@ set_property STEPS.POST_ROUTE_PHYS_OPT_DESIGN.is_enabled true [get_runs impl_1]
 set_property STEPS.POST_ROUTE_PHYS_OPT_DESIGN.ARGS.DIRECTIVE AggressiveExplore [get_runs impl_1]
 # The following implementation options will increase runtime, but get the best timing results
 set_property SEVERITY {Warning} [get_drc_checks UCIO-1]
-launch_runs synth
-wait_on_run synth
+launch_runs synth_1
+wait_on_run synth_1
 launch_runs impl_1
 wait_on_run impl_1
 open_checkpoint project/${design}.runs/impl_1/top_postroute_physopt.dcp

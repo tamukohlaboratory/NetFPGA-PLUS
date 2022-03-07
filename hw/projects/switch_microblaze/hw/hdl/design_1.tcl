@@ -386,7 +386,7 @@ proc create_root_design { parentCell } {
   # Create interface ports
   set M0_AXIS [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 M0_AXIS ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {340000000} \
+   CONFIG.FREQ_HZ {300000000} \
    ] $M0_AXIS
 
   set S00_AXI [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:aximm_rtl:1.0 S00_AXI ]
@@ -396,7 +396,7 @@ proc create_root_design { parentCell } {
    CONFIG.AWUSER_WIDTH {0} \
    CONFIG.BUSER_WIDTH {0} \
    CONFIG.DATA_WIDTH {32} \
-   CONFIG.FREQ_HZ {340000000} \
+   CONFIG.FREQ_HZ {300000000} \
    CONFIG.HAS_BRESP {1} \
    CONFIG.HAS_BURST {1} \
    CONFIG.HAS_CACHE {1} \
@@ -423,7 +423,7 @@ proc create_root_design { parentCell } {
 
   set S0_AXIS [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 S0_AXIS ]
   set_property -dict [ list \
-   CONFIG.FREQ_HZ {340000000} \
+   CONFIG.FREQ_HZ {300000000} \
    CONFIG.HAS_TKEEP {1} \
    CONFIG.HAS_TLAST {1} \
    CONFIG.HAS_TREADY {1} \
@@ -437,7 +437,7 @@ proc create_root_design { parentCell } {
 
 
   # Create ports
-  set axi_aclk [ create_bd_port -dir I -type clk -freq_hz 340000000 axi_aclk ]
+  set axi_aclk [ create_bd_port -dir I -type clk -freq_hz 300000000 axi_aclk ]
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S00_AXI} \
  ] $axi_aclk
@@ -445,7 +445,7 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.POLARITY {ACTIVE_LOW} \
  ] $axi_aresetn
-  set axis_aclk [ create_bd_port -dir I -type clk -freq_hz 340000000 axis_aclk ]
+  set axis_aclk [ create_bd_port -dir I -type clk -freq_hz 300000000 axis_aclk ]
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S0_AXIS:M0_AXIS} \
  ] $axis_aclk
@@ -509,15 +509,15 @@ proc create_root_design { parentCell } {
   # Create instance: clk_wiz_0, and set properties
   set clk_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz_0 ]
   set_property -dict [ list \
-   CONFIG.CLKIN1_JITTER_PS {29.41} \
-   CONFIG.CLKOUT1_JITTER {163.439} \
-   CONFIG.CLKOUT1_PHASE_ERROR {309.209} \
+   CONFIG.CLKIN1_JITTER_PS {33.330000000000005} \
+   CONFIG.CLKOUT1_JITTER {77.334} \
+   CONFIG.CLKOUT1_PHASE_ERROR {77.836} \
    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {400.000} \
-   CONFIG.MMCM_CLKFBOUT_MULT_F {60.000} \
-   CONFIG.MMCM_CLKIN1_PERIOD {2.941} \
+   CONFIG.MMCM_CLKFBOUT_MULT_F {4.000} \
+   CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
+   CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
    CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.000} \
-   CONFIG.MMCM_DIVCLK_DIVIDE {17} \
-   CONFIG.PRIM_IN_FREQ {340} \
+   CONFIG.MMCM_DIVCLK_DIVIDE {1} \
  ] $clk_wiz_0
 
   # Create instance: mdm_1, and set properties
