@@ -389,11 +389,11 @@ read_verilog -sv "${public_repo_dir}/common/hdl/nf_attachment.sv"
 read_verilog     "${public_repo_dir}/common/hdl/top.v"
 
 #Setting Synthesis options
-create_run -flow {Vivado Synthesis 2020} synth_1
+# create_run -flow {Vivado Synthesis 2020} synth_1
 set_property write_incremental_synth_checkpoint true [get_runs synth_1]
 set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs synth_1]
 #Setting Implementation options
-create_run impl_1 -parent_run synth_1 -flow {Vivado Implementation 2020}
+# create_run impl_1 -parent_run synth_1 -flow {Vivado Implementation 2020}
 set_property strategy Performance_ExplorePostRoutePhysOpt [get_runs impl_1]
 set_property steps.phys_opt_design.is_enabled true [get_runs impl_1]
 set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE ExploreWithHoldFix [get_runs impl_1]

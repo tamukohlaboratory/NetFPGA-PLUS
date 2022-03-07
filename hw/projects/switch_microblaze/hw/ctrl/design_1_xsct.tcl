@@ -8,12 +8,12 @@ set processor microblaze_0
 setws $sdk_directory
 repo -set $repo_directory
 
-platform create -name $platform_name -hw $sdk_directory/$platform_name -proc $processor
+platform create -name $platform_name -hw $sdk_directory/$platform_name.xsa -proc $processor
 domain create -name $domain_name -os standalone -proc $processor
 platform generate
 
 app create -name ${platform_name}_control -template "Empty Application" -domain $domain_name -lang c
-importsources -name ${platform_name}_control -path ctrl/main.c -soft-link
+importsources -name ${platform_name}_control -path ctrl/main.c
 app build -name ${platform_name}_control
 
 exit

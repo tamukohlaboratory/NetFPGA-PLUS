@@ -19,6 +19,9 @@ xvlog.pb
 xvlog.log
 xsim.dir
 seed
+.swt
+.Xil
+.Xilinx
 __pycache__
 usage_statistics_webtalk.html
 usage_statistics_webtalk.xml
@@ -48,3 +51,4 @@ hw/projects/reference_nic/sw/
 hw/projects/reference_switch/sw/
 hw/projects/reference_switch_lite/sw/
 tools/scripts/NFTest/testcheck.pyc
+hw/projects/switch_microblaze/switch_microblaze.sdk

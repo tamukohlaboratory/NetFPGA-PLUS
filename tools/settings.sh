@@ -26,6 +26,7 @@
 export NFPLUS_FOLDER=${HOME}/Projects/NetFPGA-PLUS
 export BOARD_NAME=vcu1525
 export NF_PROJECT_NAME=switch_microblaze
+# export NF_PROJECT_NAME=reference_switch
 export PYTHON_BNRY=/usr/bin/python3
 
 ### Don't change

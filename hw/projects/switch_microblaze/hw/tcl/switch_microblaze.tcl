@@ -24,7 +24,7 @@
 #
 
 #### Change design settings here #######
-set design $::env(NF_PROJECT_NAME) 
+set design $::env(NF_PROJECT_NAME)
 set top top
 set device $::env(DEVICE)
 set board  $::env(BOARD)
@@ -46,6 +46,7 @@ set datapath_freq_mhz     300
 set opl_bcam_size         16
 
 set opl_cam_depth_bits    [expr int(log(${opl_bcam_size})/log(2))]
+
 #####################################
 # Project Settings
 #####################################
@@ -69,12 +70,14 @@ if {[string match $board_name "au280"]} {
 set_property generic "C_NF_DATA_WIDTH=${datapath_width_bit} BOARD=\"${board_param}\"" [current_fileset]
 
 puts "Creating User Datapath project"
+
 #####################################
 # set IP paths
 #####################################
 create_fileset -constrset -quiet constraints
 file copy ${public_repo_dir}/ ${repo_dir}
 set_property ip_repo_paths ${repo_dir} [current_fileset]
+
 #####################################
 # Project Constraints
 #####################################
@@ -94,9 +97,9 @@ if {[string match $board_name "au280"]} {
 set_property is_enabled true [get_files ${project_constraints}]
 set_property constrset constraints [get_runs synth_1]
 set_property constrset constraints [get_runs impl_1]
- 
+
 #####################################
-# Project 
+# Project
 #####################################
 update_ip_catalog
 # OPL
@@ -395,11 +398,9 @@ read_verilog -sv "${public_repo_dir}/common/hdl/top_wrapper.sv"
 read_verilog -sv "${public_repo_dir}/common/hdl/nf_attachment.sv"
 
 #Setting Synthesis options
-create_run -flow {Vivado Synthesis 2020} synth_1
 set_property write_incremental_synth_checkpoint true [get_runs synth_1]
 set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs synth_1]
 #Setting Implementation options
-create_run impl_1 -parent_run synth_1 -flow {Vivado Implementation 2020}
 set_property strategy Performance_ExplorePostRoutePhysOpt [get_runs impl_1]
 set_property steps.phys_opt_design.is_enabled true [get_runs impl_1]
 set_property STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE ExploreWithHoldFix [get_runs impl_1]
@@ -442,7 +443,7 @@ set sdk_directory project/${design}.sdk
 file mkdir $sdk_directory
 write_hw_platform -fixed -include_bit -force -file $sdk_directory/$platform_name.xsa
 
-set xsct_filename ctrl/${design}_xsct.tcl
+set xsct_filename ctrl/${platform_name}_xsct.tcl
 set env(_JAVA_OPTIONS) "-Duser.home=[pwd]"
 set xsct_options "-no-ini $xsct_filename $platform_name $repo_directory $sdk_directory >& $sdk_directory/xsct.log -"
 if { [catch { exec xsct {*}$xsct_options } errmsg ] } {
@@ -455,14 +456,14 @@ if {[file exists $elf_filename]} {
 	add_files -fileset sources_1 -norecurse -force $elf_filename
 	add_files -fileset sim_1 -norecurse -force $elf_filename
 
-	set_property SCOPED_TO_REF ${platform_name}_i [get_files -all -of_objects [get_fileset sources_1] $elf_filename]
-	set_property SCOPED_TO_CELLS { /microblaze_0 } [get_files -all -of_objects [get_fileset sources_1] $elf_filename]
-	set_property SCOPED_TO_REF ${platform_name}_i [get_files -all -of_objects [get_fileset sim_1] $elf_filename]
-	set_property SCOPED_TO_CELLS { /microblaze_0 } [get_files -all -of_objects [get_fileset sim_1] $elf_filename]
+	set_property SCOPED_TO_REF ${platform_name} [get_files -all -of_objects [get_fileset sources_1] $elf_filename]
+	set_property SCOPED_TO_CELLS { microblaze_0 } [get_files -all -of_objects [get_fileset sources_1] $elf_filename]
+	set_property SCOPED_TO_REF ${platform_name} [get_files -all -of_objects [get_fileset sim_1] $elf_filename]
+	set_property SCOPED_TO_CELLS { microblaze_0 } [get_files -all -of_objects [get_fileset sim_1] $elf_filename]
 
-	export_ip_user_files -quiet
-	set memfiles [glob -nocomplain */sim_scripts/${platform_name}_i/*/*.mem]
-	add_files -quiet -fileset sim_1 -norecurse $memfiles
+	# export_ip_user_files -quiet
+	# set memfiles [glob -nocomplain */sim_scripts/${platform_name}_i/*/*.mem]
+	# add_files -quiet -fileset sim_1 -norecurse $memfiles
 }
 
 exit
