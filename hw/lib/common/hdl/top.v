@@ -129,7 +129,7 @@ module top #(
   wire sys_rst;
   wire locked;
 
-  clk_wiz_1 u_clk_wiz_1 (
+  clk_wiz_ip u_clk_wiz_ip (
     .clk_in1_p (sysclk_p),
     .clk_in1_n (sysclk_n),
     .reset     (1'b0),
@@ -344,11 +344,11 @@ module top #(
 `endif /* __BOARD_AU50__ */
   );
 
-  axi_crossbar_0 u_interconnect (
+  axi_crossbar_ip u_interconnect (
     .aclk          (axil_aclk),
     .aresetn       (!axil_rst),
     .s_axi_awaddr  (m_axil_awaddr ),
-    .s_axi_awprot  (),
+    .s_axi_awprot  (3'b000),
     .s_axi_awvalid (m_axil_awvalid),
     .s_axi_awready (m_axil_awready),
     .s_axi_wdata   (m_axil_wdata  ),
@@ -359,7 +359,7 @@ module top #(
     .s_axi_bvalid  (m_axil_bvalid ),
     .s_axi_bready  (m_axil_bready ),
     .s_axi_araddr  (m_axil_araddr),
-    .s_axi_arprot  (),
+    .s_axi_arprot  (3'b000),
     .s_axi_arvalid (m_axil_arvalid ),
     .s_axi_arready (m_axil_arready ),
     .s_axi_rdata   (m_axil_rdata   ),

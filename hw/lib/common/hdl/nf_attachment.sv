@@ -3,7 +3,7 @@
  * All rights reserved.
  *
  * This software was developed by the University of Cambridge Computer
- * Laboratory under EPSRC EARL Project EP/P025374/1 alongside support 
+ * Laboratory under EPSRC EARL Project EP/P025374/1 alongside support
  * from Xilinx Inc.
  *
  * @NETFPGA_LICENSE_HEADER_START@
@@ -36,15 +36,15 @@ module nf_attachment #(
 	input [C_NF_TUSER_WIDTH-1:0]     axis_dma_o_tuser,
 	input                            axis_dma_o_tvalid,
 	output                           axis_dma_o_tready,
-	input                            axis_dma_o_tlast, 
-	
+	input                            axis_dma_o_tlast,
+
 	// Master Stream Ports
 	output [C_NF_TDATA_WIDTH-1:0]    axis_dma_i_tdata,
 	output [(C_NF_TDATA_WIDTH/8)-1:0]axis_dma_i_tkeep,
 	output [C_NF_TUSER_WIDTH-1:0]    axis_dma_i_tuser,
 	output                           axis_dma_i_tvalid,
 	input                            axis_dma_i_tready,
-	output                           axis_dma_i_tlast, 
+	output                           axis_dma_i_tlast,
 
 	// Slave Stream Ports
 	input [C_NF_TDATA_WIDTH-1:0]     axis_o_0_tdata,
@@ -52,28 +52,28 @@ module nf_attachment #(
 	input [C_NF_TUSER_WIDTH-1:0]     axis_o_0_tuser,
 	input                            axis_o_0_tvalid,
 	output                           axis_o_0_tready,
-	input                            axis_o_0_tlast, 
+	input                            axis_o_0_tlast,
 	// Slave Stream Ports
 	input [C_NF_TDATA_WIDTH-1:0]     axis_o_1_tdata,
 	input [(C_NF_TDATA_WIDTH/8)-1:0] axis_o_1_tkeep,
 	input [C_NF_TUSER_WIDTH-1:0]     axis_o_1_tuser,
 	input                            axis_o_1_tvalid,
 	output                           axis_o_1_tready,
-	input                            axis_o_1_tlast, 
+	input                            axis_o_1_tlast,
 	// Master Stream Ports
 	output [C_NF_TDATA_WIDTH-1:0]    axis_i_0_tdata,
 	output [(C_NF_TDATA_WIDTH/8)-1:0]axis_i_0_tkeep,
 	output [C_NF_TUSER_WIDTH-1:0]    axis_i_0_tuser,
 	output                           axis_i_0_tvalid,
 	input                            axis_i_0_tready,
-	output                           axis_i_0_tlast, 
+	output                           axis_i_0_tlast,
 	// Master Stream Ports
 	output [C_NF_TDATA_WIDTH-1:0]    axis_i_1_tdata,
 	output [(C_NF_TDATA_WIDTH/8)-1:0]axis_i_1_tkeep,
 	output [C_NF_TUSER_WIDTH-1:0]    axis_i_1_tuser,
 	output                           axis_i_1_tvalid,
 	input                            axis_i_1_tready,
-	output                           axis_i_1_tlast, 
+	output                           axis_i_1_tlast,
 
 	input                            axis_cmac_0_rx_tvalid,
 	input [C_TDATA_WIDTH-1:0]        axis_cmac_0_rx_tdata ,
@@ -251,6 +251,23 @@ module nf_attachment #(
     end
   end
 
+  wire        s0_axil_awvalid;
+  wire [31:0] s0_axil_awaddr;
+  wire        s0_axil_awready;
+  wire        s0_axil_wvalid;
+  wire [31:0] s0_axil_wdata;
+  wire        s0_axil_wready;
+  wire        s0_axil_bvalid;
+  wire [1:0]  s0_axil_bresp;
+  wire        s0_axil_bready;
+  wire        s0_axil_arvalid;
+  wire [31:0] s0_axil_araddr;
+  wire        s0_axil_arready;
+  wire        s0_axil_rvalid;
+  wire [31:0] s0_axil_rdata;
+  wire [1:0]  s0_axil_rresp;
+  wire        s0_axil_rready;
+
   wire             S2_AXI_ACLK,     S1_AXI_ACLK,     S0_AXI_ACLK;
   wire             S2_AXI_ARESETN,  S1_AXI_ARESETN,  S0_AXI_ARESETN;
   wire[31 : 0]     S2_AXI_AWADDR,   S1_AXI_AWADDR,   S0_AXI_AWADDR;
@@ -271,28 +288,74 @@ module nf_attachment #(
   wire             S2_AXI_BVALID,   S1_AXI_BVALID,   S0_AXI_BVALID;
   wire             S2_AXI_AWREADY,  S1_AXI_AWREADY,  S0_AXI_AWREADY;
 
-  axi_crossbar_0 u_crossbar (
-    .aclk          (axil_aclk),
-    .aresetn       (!axil_rst),
-    .s_axi_awaddr  (s_axil_awaddr ),
-    .s_axi_awprot  (),
+  axi_clock_converter_ip u_clk_conv (
+    .s_axi_aclk    (axil_aclk),
+    .s_axi_aresetn (!axil_rst),
+    .s_axi_awaddr  (s_axil_awaddr),
+    .s_axi_awprot  (3'b000),
     .s_axi_awvalid (s_axil_awvalid),
     .s_axi_awready (s_axil_awready),
     .s_axi_wdata   (s_axil_wdata  ),
     .s_axi_wstrb   (4'b1111),
-    .s_axi_wvalid  (s_axil_wvalid ),
-    .s_axi_wready  (s_axil_wready ),
-    .s_axi_bresp   (s_axil_bresp  ),
-    .s_axi_bvalid  (s_axil_bvalid ),
-    .s_axi_bready  (s_axil_bready ),
+    .s_axi_wvalid  (s_axil_wvalid),
+    .s_axi_wready  (s_axil_wready),
+    .s_axi_bresp   (s_axil_bresp ),
+    .s_axi_bvalid  (s_axil_bvalid),
+    .s_axi_bready  (s_axil_bready),
     .s_axi_araddr  (s_axil_araddr),
-    .s_axi_arprot  (),
-    .s_axi_arvalid (s_axil_arvalid ),
-    .s_axi_arready (s_axil_arready ),
-    .s_axi_rdata   (s_axil_rdata   ),
-    .s_axi_rresp   (s_axil_rresp   ),
-    .s_axi_rvalid  (s_axil_rvalid  ),
-    .s_axi_rready  (s_axil_rready  ),
+    .s_axi_arprot  (3'b000),
+    .s_axi_arvalid (s_axil_arvalid),
+    .s_axi_arready (s_axil_arready),
+    .s_axi_rdata   (s_axil_rdata  ),
+    .s_axi_rresp   (s_axil_rresp  ),
+    .s_axi_rvalid  (s_axil_rvalid ),
+    .s_axi_rready  (s_axil_rready ),
+
+    .m_axi_aclk    (core_clk),
+    .m_axi_aresetn (!core_rst),
+    .m_axi_awaddr  (s0_axil_awaddr),
+    .m_axi_awprot  (),
+    .m_axi_awvalid (s0_axil_awvalid),
+    .m_axi_awready (s0_axil_awready ),
+    .m_axi_wdata   (s0_axil_wdata),
+    .m_axi_wstrb   (),
+    .m_axi_wvalid  (s0_axil_wvalid),
+    .m_axi_wready  (s0_axil_wready),
+    .m_axi_bresp   (s0_axil_bresp ),
+    .m_axi_bvalid  (s0_axil_bvalid),
+    .m_axi_bready  (s0_axil_bready),
+    .m_axi_araddr  (s0_axil_araddr),
+    .m_axi_arprot  (),
+    .m_axi_arvalid (s0_axil_arvalid),
+    .m_axi_arready (s0_axil_arready),
+    .m_axi_rdata   (s0_axil_rdata  ),
+    .m_axi_rresp   (s0_axil_rresp  ),
+    .m_axi_rvalid  (s0_axil_rvalid ),
+    .m_axi_rready  (s0_axil_rready )
+  );
+
+  axi_crossbar_ip u_crossbar (
+    .aclk          (core_aclk),
+    .aresetn       (!core_rst),
+    .s_axi_awaddr  (s0_axil_awaddr ),
+    .s_axi_awprot  (3'b000),
+    .s_axi_awvalid (s0_axil_awvalid),
+    .s_axi_awready (s0_axil_awready),
+    .s_axi_wdata   (s0_axil_wdata  ),
+    .s_axi_wstrb   (4'b1111),
+    .s_axi_wvalid  (s0_axil_wvalid ),
+    .s_axi_wready  (s0_axil_wready ),
+    .s_axi_bresp   (s0_axil_bresp  ),
+    .s_axi_bvalid  (s0_axil_bvalid ),
+    .s_axi_bready  (s0_axil_bready ),
+    .s_axi_araddr  (s0_axil_araddr),
+    .s_axi_arprot  (3'b000),
+    .s_axi_arvalid (s0_axil_arvalid ),
+    .s_axi_arready (s0_axil_arready ),
+    .s_axi_rdata   (s0_axil_rdata   ),
+    .s_axi_rresp   (s0_axil_rresp   ),
+    .s_axi_rvalid  (s0_axil_rvalid  ),
+    .s_axi_rready  (s0_axil_rready  ),
     .m_axi_awaddr  ({S2_AXI_AWADDR ,S1_AXI_AWADDR ,S0_AXI_AWADDR }),
     .m_axi_awprot  (),
     .m_axi_awvalid ({S2_AXI_AWVALID,S1_AXI_AWVALID,S0_AXI_AWVALID}),
@@ -311,7 +374,7 @@ module nf_attachment #(
     .m_axi_rdata   ({S2_AXI_RDATA  ,S1_AXI_RDATA  ,S0_AXI_RDATA  }),
     .m_axi_rresp   ({S2_AXI_RRESP  ,S1_AXI_RRESP  ,S0_AXI_RRESP  }),
     .m_axi_rvalid  ({S2_AXI_RVALID ,S1_AXI_RVALID ,S0_AXI_RVALID }),
-    .m_axi_rready  ({S2_AXI_RREADY ,S1_AXI_RREADY ,S0_AXI_RREADY }) 
+    .m_axi_rready  ({S2_AXI_RREADY ,S1_AXI_RREADY ,S0_AXI_RREADY })
   );
   wire  [C_TDATA_WIDTH-1:0]      axis_dma_conv_o_tdata , axis_dma_conv_i_tdata ;
   wire  [C_TDATA_WIDTH/8-1:0]    axis_dma_conv_o_tkeep , axis_dma_conv_i_tkeep ;
@@ -322,7 +385,7 @@ module nf_attachment #(
   wire [15:0]                    axis_dma_conv_o_tuser_size, axis_dma_conv_i_tuser_size;
   wire [15:0]                    axis_dma_conv_o_tuser_src , axis_dma_conv_i_tuser_src ;
   wire [15:0]                    axis_dma_conv_o_tuser_dst , axis_dma_conv_i_tuser_dst ;
-  
+
   nf_mac_attachment_dma_ip u_nf_attachment_dma (
     .S_AXI_ACLK            (axil_aclk),
     .S_AXI_ARESETN         (!axil_rst),
@@ -404,9 +467,9 @@ module nf_attachment #(
     .S_AXI_BRESP            (S0_AXI_BRESP),
     .S_AXI_BVALID           (S0_AXI_BVALID),
     .S_AXI_AWREADY          (S0_AXI_AWREADY),
-    // 10GE block clk & rst 
-    .clk156                (cmac_clk[0]),  
-    .areset_clk156         (cmac0_rst), 
+    // 10GE block clk & rst
+    .clk156                (cmac_clk[0]),
+    .areset_clk156         (cmac0_rst),
     // RX MAC 64b@clk156 (no backpressure) -> rx_queue 64b@axis_clk
     .m_axis_mac_tdata      (axis_cmac_0_rx_tdata),
     .m_axis_mac_tkeep      (axis_cmac_0_rx_tkeep),
@@ -423,10 +486,10 @@ module nf_attachment #(
     .s_axis_mac_tlast      (axis_cmac_0_tx_tlast),
     .s_axis_mac_tready     (axis_cmac_0_tx_tready),
 
-    // TX/RX DATA channels  
+    // TX/RX DATA channels
     .interface_number      (CMAC0_IFNUM),
 
-    // NFPLUS pipeline clk & rst 
+    // NFPLUS pipeline clk & rst
     .axis_aclk             (core_clk),
     .axis_aresetn          (!core_rst),
     // input from ref pipeline 256b -> MAC
@@ -466,8 +529,8 @@ module nf_attachment #(
     .S_AXI_BVALID          (S1_AXI_BVALID),
     .S_AXI_AWREADY         (S1_AXI_AWREADY),
     // 10GE block clk & rst
-    .clk156                (cmac_clk[1]),  
-    .areset_clk156         (cmac1_rst), 
+    .clk156                (cmac_clk[1]),
+    .areset_clk156         (cmac1_rst),
     // RX MAC 64b@clk156 (no backpressure) -> rx_queue 64b@axis_clk
     .m_axis_mac_tdata      (axis_cmac_1_rx_tdata),
     .m_axis_mac_tkeep      (axis_cmac_1_rx_tkeep),
@@ -484,10 +547,10 @@ module nf_attachment #(
     .s_axis_mac_tlast      (axis_cmac_1_tx_tlast),
     .s_axis_mac_tready     (axis_cmac_1_tx_tready),
 
-    // TX/RX DATA channels  
+    // TX/RX DATA channels
     .interface_number      (CMAC1_IFNUM),
 
-    // NFPLUS pipeline clk & rst 
+    // NFPLUS pipeline clk & rst
     .axis_aclk             (core_clk),
     .axis_aresetn          (!core_rst),
     // input from ref pipeline 256b -> MAC

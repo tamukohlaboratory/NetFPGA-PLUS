@@ -141,7 +141,7 @@ set_property generate_synth_checkpoint false [get_files nf_mac_attachment_dma_ip
 reset_target all [get_ips nf_mac_attachment_dma_ip]
 generate_target all [get_ips nf_mac_attachment_dma_ip]
 
-create_ip -name axi_crossbar -vendor xilinx.com -library ip -module_name axi_crossbar_0
+create_ip -name axi_crossbar -vendor xilinx.com -library ip -module_name axi_crossbar_ip
 set_property -dict [list \
 CONFIG.NUM_MI {3}                            \
 CONFIG.PROTOCOL {AXI4LITE}                   \
@@ -217,13 +217,32 @@ CONFIG.M01_A00_ADDR_WIDTH {16}               \
 CONFIG.M02_A00_ADDR_WIDTH {16}               \
 CONFIG.M00_A00_BASE_ADDR {0x0000000000000000}\
 CONFIG.M01_A00_BASE_ADDR {0x0000000000010000}\
-CONFIG.M02_A00_BASE_ADDR {0x0000000000020000}] [get_ips axi_crossbar_0]
-set_property generate_synth_checkpoint false [get_files axi_crossbar_0.xci]
-reset_target all [get_ips axi_crossbar_0]
-generate_target all [get_ips axi_crossbar_0]
+CONFIG.M02_A00_BASE_ADDR {0x0000000000020000}] [get_ips axi_crossbar_ip]
+set_property generate_synth_checkpoint false [get_files axi_crossbar_ip.xci]
+reset_target all [get_ips axi_crossbar_ip]
+generate_target all [get_ips axi_crossbar_ip]
+
+create_ip -name axi_clock_converter -vendor xilinx.com -library ip -module_name axi_clock_converter_ip
+set_property -dict {
+    CONFIG.PROTOCOL {AXI4LITE}
+    CONFIG.DATA_WIDTH {32}
+    CONFIG.ID_WIDTH {0}
+    CONFIG.AWUSER_WIDTH {0}
+    CONFIG.ARUSER_WIDTH {0}
+    CONFIG.RUSER_WIDTH {0}
+    CONFIG.WUSER_WIDTH {0}
+    CONFIG.BUSER_WIDTH {0}
+    CONFIG.SI_CLK.FREQ_HZ {250000000}
+    CONFIG.MI_CLK.FREQ_HZ ${datapath_freq_mhz}000000
+    CONFIG.ACLK_ASYNC {1}
+    CONFIG.SYNCHRONIZATION_STAGES {3}
+} [get_ips axi_clock_converter_ip]
+set_property generate_synth_checkpoint false [get_files axi_clock_converter_ip.xci]
+reset_target all [get_ips axi_clock_converter_ip]
+generate_target all [get_ips axi_clock_converter_ip]
 
 #Add a clock wizard
-create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_1
+create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_ip
 if {[string match "${datapath_freq_mhz}" "200"]} {
 #200MHz clock
 	set_property -dict [list \
@@ -237,7 +256,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {6.000} \
 		CONFIG.CLKOUT1_JITTER {88.677} \
-		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "250"]} {
 #250MHz clock
 	set_property -dict [list \
@@ -251,7 +270,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.750} \
 		CONFIG.CLKOUT1_JITTER {97.464} \
-		CONFIG.CLKOUT1_PHASE_ERROR {87.466}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {87.466}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "260"]} {
 #260MHz clock
 	set_property -dict [list \
@@ -265,7 +284,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.625} \
 		CONFIG.CLKOUT1_JITTER {173.769} \
-		CONFIG.CLKOUT1_PHASE_ERROR {308.258}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {308.258}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "280"]} {
 #280MHz clock
 	set_property -dict [list \
@@ -279,7 +298,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.250} \
 		CONFIG.CLKOUT1_JITTER {172.849} \
-		CONFIG.CLKOUT1_PHASE_ERROR {302.881}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {302.881}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "300"]} {
 #300MHz clock
 	set_property -dict [list \
@@ -293,7 +312,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.000} \
 		CONFIG.CLKOUT1_JITTER {81.921} \
-		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "320"]} {
 #320MHz clock
 	set_property -dict [list \
@@ -307,7 +326,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.750} \
 		CONFIG.CLKOUT1_JITTER {80.895} \
-		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "340"]} {
 #340MHz clock
 	set_property -dict [list \
@@ -321,7 +340,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.500} \
 		CONFIG.CLKOUT1_JITTER {168.351} \
-		CONFIG.CLKOUT1_PHASE_ERROR {302.881}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {302.881}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "360"]} {
 # 360MHz clock
 	set_property -dict [list \
@@ -335,7 +354,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.375} \
 		CONFIG.CLKOUT1_JITTER {100.391} \
-		CONFIG.CLKOUT1_PHASE_ERROR {135.245}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {135.245}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "380"]} {
 #380MHz clock
 	set_property -dict [list \
@@ -349,7 +368,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.125} \
 		CONFIG.CLKOUT1_JITTER {90.190} \
-		CONFIG.CLKOUT1_PHASE_ERROR {87.466}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {87.466}] [get_ips clk_wiz_ip]
 } elseif {[string match "${datapath_freq_mhz}" "400"]} {
 #400MHz clock
 	set_property -dict [list \
@@ -363,15 +382,15 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.000} \
 		CONFIG.CLKOUT1_JITTER {77.448} \
-		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_ip]
 } else {
 	puts "Error: the specified clock is error"
 	exit -1
 }
 
-set_property generate_synth_checkpoint false [get_files clk_wiz_1.xci]
-reset_target all [get_ips clk_wiz_1]
-generate_target all [get_ips clk_wiz_1]
+set_property generate_synth_checkpoint false [get_files clk_wiz_ip.xci]
+reset_target all [get_ips clk_wiz_ip]
+generate_target all [get_ips clk_wiz_ip]
 
 #Adding source files
 source "./hdl/design_1.tcl"
