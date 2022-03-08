@@ -137,9 +137,10 @@ set_property -dict {LOC N3} [get_ports {QSFP1_RX_N[0]}]
 # Datapath Clock - 300MHz
 
 
-create_clock -period 3.103 -name QSFP0_CLOCK_P -waveform {0.000 1.552} [get_ports QSFP0_CLOCK_P]
-create_clock -period 3.103 -name QSFP1_CLOCK_P -waveform {0.000 1.552} [get_ports QSFP1_CLOCK_P]
-create_clock -period 10.000 -name pci_clk_p -waveform {0.000 5.000} [get_ports pci_clk_p]
+# create_clock -period 3.103 -name QSFP0_CLOCK_P -waveform {0.000 1.552} [get_ports QSFP0_CLOCK_P]
+# create_clock -period 3.103 -name QSFP1_CLOCK_P -waveform {0.000 1.552} [get_ports QSFP1_CLOCK_P]
+# create_clock -period 10.000 -name pci_clk_p -waveform {0.000 5.000} [get_ports pci_clk_p]
+
 set_clock_groups -asynchronous -group [get_clocks clk_out1_qdma_subsystem_clk_div_2] -group [get_clocks clk_out1_clk_wiz_1_1]
 set_clock_groups -asynchronous -group [get_clocks {rxoutclk_out[0]}] -group [get_clocks clk_out1_qdma_subsystem_clk_div_2]
 set_clock_groups -asynchronous -group [get_clocks {rxoutclk_out[0]_1}] -group [get_clocks clk_out1_qdma_subsystem_clk_div_2]

@@ -3,7 +3,7 @@
 # All rights reserved.
 #
 # This software was developed by the University of Cambridge Computer
-# Laboratory under EPSRC EARL Project EP/P025374/1 alongside support 
+# Laboratory under EPSRC EARL Project EP/P025374/1 alongside support
 # from Xilinx Inc.
 #
 # @NETFPGA_LICENSE_HEADER_START@
@@ -31,35 +31,32 @@ set_property PACKAGE_PIN AY38 [get_ports sysclk_n];
 set_property IOSTANDARD DIFF_SSTL12 [get_ports sysclk_n];
 set_property PACKAGE_PIN AY37 [get_ports sysclk_p];
 set_property IOSTANDARD DIFF_SSTL12 [get_ports sysclk_p];
-create_clock -period  3.333 -name SYSCLK0_300 [get_ports sysclk_p]
-
-set_clock_groups -asynchronous -group [get_clocks SYSCLK0_300 -include_generated_clocks]
 
 #######################################################################
 # PCIe
 #######################################################################
 set_property PACKAGE_PIN AM10 [get_ports pci_clk_n]
 set_property PACKAGE_PIN AM11 [get_ports pci_clk_p]
-create_clock -name sys_clk -period 10 [get_ports pci_clk_p]
 
 set_property PULLUP true [get_ports pci_rst_n]
 set_property IOSTANDARD LVCMOS12 [get_ports pci_rst_n]
 set_property PACKAGE_PIN BD21 [get_ports pci_rst_n]
-
 set_false_path -from [get_ports pci_rst_n]
+
 #######################################################################
 # CMAC
 #######################################################################
 # QSFP0_CLOCK
 set_property PACKAGE_PIN K10 [get_ports QSFP0_CLOCK_N];
 set_property PACKAGE_PIN K11 [get_ports QSFP0_CLOCK_P];
+
 # QSFP0_PORT
 set_property PACKAGE_PIN AT20 [get_ports QSFP0_FS[0]];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP0_FS[0]];
 set_property PACKAGE_PIN AU22 [get_ports QSFP0_FS[1]];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP0_FS[1]];
 set_property PACKAGE_PIN AT22 [get_ports QSFP0_RESET];
-set_property IOSTANDARD LVCMOS12 [get_ports QSFP0_RESET]; 
+set_property IOSTANDARD LVCMOS12 [get_ports QSFP0_RESET];
 
 set_property PACKAGE_PIN BE21 [get_ports QSFP0_INTL];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP0_INTL];
@@ -92,17 +89,17 @@ set_property -dict { LOC M1 } [get_ports QSFP0_RX_N[1]]
 set_property -dict { LOC N4 } [get_ports QSFP0_RX_P[0]]
 set_property -dict { LOC N3 } [get_ports QSFP0_RX_N[0]]
 
-# QSFP1
+# QSFP1_CLOCK
 set_property PACKAGE_PIN P10 [get_ports QSFP1_CLOCK_N];
 set_property PACKAGE_PIN P11 [get_ports QSFP1_CLOCK_P];
 
-# QSFP1
+# QSFP1_PORT
 set_property PACKAGE_PIN AR22 [get_ports QSFP1_FS[0]];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_FS[0]];
 set_property PACKAGE_PIN AU20 [get_ports QSFP1_FS[1]];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_FS[1]];
-set_property PACKAGE_PIN AR21 [get_ports QSFP1_RESET]; 
-set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_RESET]; 
+set_property PACKAGE_PIN AR21 [get_ports QSFP1_RESET];
+set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_RESET];
 set_property PACKAGE_PIN AV21 [get_ports QSFP1_INTL];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_INTL];
 set_property PACKAGE_PIN AV22 [get_ports QSFP1_LPMODE];
@@ -113,7 +110,6 @@ set_property PACKAGE_PIN AY20 [get_ports QSFP1_MODSELL];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_MODSELL];
 set_property PACKAGE_PIN BC18 [get_ports QSFP1_RESETL];
 set_property IOSTANDARD LVCMOS12 [get_ports QSFP1_RESETL];
-
 
 # QSFP1_TX
 set_property -dict { LOC P7 } [get_ports QSFP1_TX_P[3]]
@@ -138,18 +134,23 @@ set_property -dict { LOC U3 } [get_ports QSFP1_RX_N[0]]
 ##########################################################################
 # Timing
 ##########################################################################
-# CMAC user clock
-create_clock -period 3.103 -name cmac_clk_0 [get_pins -hier -filter name=~*cmac_port[0]*cmac_gtwiz_userclk_tx_inst/txoutclk_out[0]]
-create_clock -period 3.103 -name cmac_clk_1 [get_pins -hier -filter name=~*cmac_port[1]*cmac_gtwiz_userclk_tx_inst/txoutclk_out[0]]
+create_clock -period 10.000 -name pci_clk -waveform {0.000 5.000} [get_ports pci_clk_p]
 
-# Datapath Clock - 300MHz
-create_clock -period 3.333 -name dp_clk [get_pins -hier -filter name=~*u_clk_wiz_1/clk_out1]
+create_generated_clock -name fpga_clk -source [get_pins u_clk_wiz_1/inst/mmcme4_adv_inst/CLKIN1] -master_clock [get_clocks sysclk_p] [get_pins u_clk_wiz_1/inst/mmcme4_adv_inst/CLKOUT0]
+create_generated_clock -name qdma_clk -source [get_pins u_nf_shell/xilinx_nic_shell/inst/qdma_subsystem_inst/qdma_wrapper_inst/clk_div_inst/inst/mmcme4_adv_inst/CLKIN1] -master_clock [get_clocks u_nf_shell/xilinx_nic_shell/inst/qdma_subsystem_inst/qdma_wrapper_inst/clk_div_inst/inst/clk_in1] [get_pins u_nf_shell/xilinx_nic_shell/inst/qdma_subsystem_inst/qdma_wrapper_inst/clk_div_inst/inst/mmcme4_adv_inst/CLKOUT0]
+create_generated_clock -name qsfp0_clk -source [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[0].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_0_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_0_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[35].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/QPLL0CLK}] -master_clock [get_clocks qpll0outclk_out[0]] [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[0].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_0_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_0_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[35].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK}]
+create_generated_clock -name qsfp1_clk -source [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[1].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_1_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_1_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[36].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/QPLL0CLK}] -master_clock [get_clocks qpll0outclk_out[0]_1] [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[1].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_1_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_1_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[36].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK}]
 
-set_false_path -from [get_clocks axis_aclk] -to [get_clocks dp_clk]
-set_false_path -from [get_clocks dp_clk] -to [get_clocks axis_aclk]
-set_false_path -from [get_clocks cmac_clk_1] -to [get_clocks dp_clk]
-set_false_path -from [get_clocks dp_clk] -to [get_clocks cmac_clk_1]
-set_false_path -from [get_clocks cmac_clk_0] -to [get_clocks dp_clk]
-set_false_path -from [get_clocks dp_clk] -to [get_clocks cmac_clk_0]
-set_false_path -from [get_clocks clk_out1_qdma_subsystem_clk_div_1] -to [get_clocks axis_aclk]
-set_false_path -from [get_clocks dp_clk] -to [get_clocks clk_out1_qdma_subsystem_clk_div_1]
+set_clock_groups -asynchronous -group [get_clocks fpga_clk] -group [get_clocks qdma_clk]
+set_clock_groups -asynchronous -group [get_clocks qdma_clk] -group [get_clocks fpga_clk]
+set_clock_groups -asynchronous -group [get_clocks fpga_clk] -group [get_clocks qsfp0_clk]
+set_clock_groups -asynchronous -group [get_clocks qsfp0_clk] -group [get_clocks fpga_clk]
+set_clock_groups -asynchronous -group [get_clocks fpga_clk] -group [get_clocks qsfp1_clk]
+set_clock_groups -asynchronous -group [get_clocks qsfp1_clk] -group [get_clocks fpga_clk]
+
+# set_clock_groups -asynchronous -group [get_clocks qdma_clk] -group [get_clocks qsfp0_clk]
+# set_clock_groups -asynchronous -group [get_clocks qsfp0_clk] -group [get_clocks qdma_clk]
+# set_clock_groups -asynchronous -group [get_clocks qdma_clk] -group [get_clocks qsfp1_clk]
+# set_clock_groups -asynchronous -group [get_clocks qsfp1_clk] -group [get_clocks qdma_clk]
+# set_clock_groups -asynchronous -group [get_clocks qsfp0_clk] -group [get_clocks qsfp1_clk]
+# set_clock_groups -asynchronous -group [get_clocks qsfp1_clk] -group [get_clocks qsfp0_clk]

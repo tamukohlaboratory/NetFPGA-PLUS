@@ -227,7 +227,7 @@ create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_1
 if {[string match "${datapath_freq_mhz}" "200"]} {
 #200MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -241,7 +241,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "250"]} {
 #250MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {250.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -255,7 +255,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "260"]} {
 #260MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {260.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -269,7 +269,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "280"]} {
 #280MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {280.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -283,7 +283,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "300"]} {
 #300MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {300.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -297,7 +297,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "320"]} {
 #320MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {320.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -311,7 +311,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "340"]} {
 #340MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {340.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -325,7 +325,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "360"]} {
 # 360MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {360.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -339,7 +339,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "380"]} {
 #380MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {380.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -353,7 +353,7 @@ if {[string match "${datapath_freq_mhz}" "200"]} {
 } elseif {[string match "${datapath_freq_mhz}" "400"]} {
 #400MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_SOURCE {Differential_clock_capable_pin} \
 		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {400.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
@@ -377,7 +377,7 @@ generate_target all [get_ips clk_wiz_1]
 source "./hdl/design_1.tcl"
 read_verilog     "./hdl/nf_datapath.v"
 read_verilog     "${public_repo_dir}/common/hdl/top.v"
-read_verilog -sv "${public_repo_dir}/common/hdl/top_wrapper.sv"
+read_verilog -sv "${public_repo_dir}/common/hdl/nf_shell.sv"
 read_verilog -sv "${public_repo_dir}/common/hdl/nf_attachment.sv"
 
 #Setting Synthesis options

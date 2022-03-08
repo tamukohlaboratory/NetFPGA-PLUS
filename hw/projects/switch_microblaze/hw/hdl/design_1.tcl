@@ -396,7 +396,7 @@ proc create_root_design { parentCell } {
    CONFIG.AWUSER_WIDTH {0} \
    CONFIG.BUSER_WIDTH {0} \
    CONFIG.DATA_WIDTH {32} \
-   CONFIG.FREQ_HZ {300000000} \
+   CONFIG.FREQ_HZ {125000000} \
    CONFIG.HAS_BRESP {1} \
    CONFIG.HAS_BURST {1} \
    CONFIG.HAS_CACHE {1} \
@@ -437,7 +437,7 @@ proc create_root_design { parentCell } {
 
 
   # Create ports
-  set axi_aclk [ create_bd_port -dir I -type clk -freq_hz 300000000 axi_aclk ]
+  set axi_aclk [ create_bd_port -dir I -type clk -freq_hz 125000000 axi_aclk ]
   set_property -dict [ list \
    CONFIG.ASSOCIATED_BUSIF {S00_AXI} \
  ] $axi_aclk
