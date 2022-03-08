@@ -102,14 +102,6 @@ set_property constrset constraints [get_runs impl_1]
 # Project
 #####################################
 update_ip_catalog
-# OPL
-create_ip -name switch_output_port_lookup -vendor NetFPGA -library NetFPGA -module_name switch_output_port_lookup_ip
-set_property CONFIG.C_CAM_LUT_DEPTH_BITS ${opl_cam_depth_bits} [get_ips switch_output_port_lookup_ip]
-set_property CONFIG.C_M_AXIS_DATA_WIDTH ${datapath_width_bit} [get_ips switch_output_port_lookup_ip]
-set_property CONFIG.C_S_AXIS_DATA_WIDTH ${datapath_width_bit} [get_ips switch_output_port_lookup_ip]
-set_property generate_synth_checkpoint false [get_files switch_output_port_lookup_ip.xci]
-reset_target all [get_ips switch_output_port_lookup_ip]
-generate_target all [get_ips switch_output_port_lookup_ip]
 # input_arbiter
 create_ip -name input_arbiter -vendor NetFPGA -library NetFPGA -module_name input_arbiter_ip
 set_property CONFIG.C_M_AXIS_DATA_WIDTH ${datapath_width_bit} [get_ips input_arbiter_ip]
@@ -230,157 +222,148 @@ set_property generate_synth_checkpoint false [get_files axi_crossbar_0.xci]
 reset_target all [get_ips axi_crossbar_0]
 generate_target all [get_ips axi_crossbar_0]
 
-create_ip -name axi_clock_converter -vendor xilinx.com -library ip -module_name axi_clock_converter_0
-set_property -dict {
-    CONFIG.PROTOCOL {AXI4LITE}
-    CONFIG.DATA_WIDTH {32}
-    CONFIG.ID_WIDTH {0}
-    CONFIG.AWUSER_WIDTH {0}
-    CONFIG.ARUSER_WIDTH {0}
-    CONFIG.RUSER_WIDTH {0}
-    CONFIG.WUSER_WIDTH {0}
-    CONFIG.BUSER_WIDTH {0}
-    CONFIG.SI_CLK.FREQ_HZ {250000000}
-    CONFIG.MI_CLK.FREQ_HZ ${datapath_freq_mhz}000000
-    CONFIG.ACLK_ASYNC {1}
-    CONFIG.SYNCHRONIZATION_STAGES {3}
-} [get_ips axi_clock_converter_0]
-set_property generate_synth_checkpoint false [get_files axi_clock_converter_0.xci]
-reset_target all [get_ips axi_clock_converter_0]
-generate_target all [get_ips axi_clock_converter_0]
-
 #Add a clock wizard
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_1
 if {[string match "${datapath_freq_mhz}" "200"]} {
 #200MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {5} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {24.000} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {4.000} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {6.000} \
-		CONFIG.CLKOUT1_JITTER {119.392} \
-		CONFIG.CLKOUT1_PHASE_ERROR {154.678}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {88.677} \
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "250"]} {
 #250MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {250.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {4.750} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {3} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {11.875} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.750} \
-		CONFIG.CLKOUT1_JITTER {85.152} \
-		CONFIG.CLKOUT1_PHASE_ERROR {78.266}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {97.464} \
+		CONFIG.CLKOUT1_PHASE_ERROR {87.466}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "260"]} {
 #260MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {260.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {25} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {120.250} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {15} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {60.125} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.625} \
-		CONFIG.CLKOUT1_JITTER {182.359} \
-		CONFIG.CLKOUT1_PHASE_ERROR {351.991}] [get_ips clk_wiz_10]
+		CONFIG.CLKOUT1_JITTER {173.769} \
+		CONFIG.CLKOUT1_PHASE_ERROR {308.258}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "280"]} {
 #280MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {280.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {25} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {119.000} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {15} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {59.500} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.250} \
-		CONFIG.CLKOUT1_JITTER {183.720} \
-		CONFIG.CLKOUT1_PHASE_ERROR {357.524}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {172.849} \
+		CONFIG.CLKOUT1_PHASE_ERROR {302.881}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "300"]} {
 #300MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {300.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {5} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {24.000} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {4.000} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.000} \
-		CONFIG.CLKOUT1_JITTER {111.430} \
-		CONFIG.CLKOUT1_PHASE_ERROR {154.678}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {81.921} \
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "320"]} {
 #320MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {320.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {5} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {24.000} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {4.000} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.750} \
-		CONFIG.CLKOUT1_JITTER {110.215} \
-		CONFIG.CLKOUT1_PHASE_ERROR {154.678}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {80.895} \
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "340"]} {
 #340MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {340.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {25} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {119.000} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {15} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {59.500} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.500} \
-		CONFIG.CLKOUT1_JITTER {179.007} \
-		CONFIG.CLKOUT1_PHASE_ERROR {357.524}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {168.351} \
+		CONFIG.CLKOUT1_PHASE_ERROR {302.881}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "360"]} {
 # 360MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {360.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {25} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {121.500} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {5} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {20.250} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.375} \
-		CONFIG.CLKOUT1_JITTER {171.636} \
-		CONFIG.CLKOUT1_PHASE_ERROR {346.603}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {100.391} \
+		CONFIG.CLKOUT1_PHASE_ERROR {135.245}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "380"]} {
 #380MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {380.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {4.750} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {3} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {11.875} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.125} \
-		CONFIG.CLKOUT1_JITTER {78.466} \
-		CONFIG.CLKOUT1_PHASE_ERROR {78.266}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {90.190} \
+		CONFIG.CLKOUT1_PHASE_ERROR {87.466}] [get_ips clk_wiz_1]
 } elseif {[string match "${datapath_freq_mhz}" "400"]} {
 #400MHz clock
 	set_property -dict [list \
-		CONFIG.PRIM_IN_FREQ {250.000} \
+		CONFIG.PRIM_SOURCER {Differential_clock_capable_pin} \
+		CONFIG.PRIM_IN_FREQ {300.000} \
 		CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {400.000} \
 		CONFIG.CLKIN1_JITTER_PS {40.0} \
-		CONFIG.MMCM_DIVCLK_DIVIDE {5} \
-		CONFIG.MMCM_CLKFBOUT_MULT_F {24.000} \
-		CONFIG.MMCM_CLKIN1_PERIOD {4.000} \
+		CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+		CONFIG.MMCM_CLKFBOUT_MULT_F {4.000} \
+		CONFIG.MMCM_CLKIN1_PERIOD {3.333} \
 		CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
 		CONFIG.MMCM_CLKOUT0_DIVIDE_F {3.000} \
-		CONFIG.CLKOUT1_JITTER {106.119} \
-		CONFIG.CLKOUT1_PHASE_ERROR {154.678}] [get_ips clk_wiz_1]
+		CONFIG.CLKOUT1_JITTER {77.448} \
+		CONFIG.CLKOUT1_PHASE_ERROR {77.836}] [get_ips clk_wiz_1]
 } else {
 	puts "Error: the specified clock is error"
 	exit -1

@@ -15,10 +15,10 @@
 # limitations under the License.
 #
 # *************************************************************************
-set_false_path -through [get_ports pci_rst_n]
+# set_false_path -through [get_ports pci_rst_n]
 
-set axis_aclk [get_clocks -of_object [get_nets u_top_wrapper/axis_aclk]]
-foreach cmac_clk [get_clocks -of_object [get_nets u_top_wrapper/cmac_clk*]] {
-    set_max_delay -datapath_only -from $axis_aclk -to $cmac_clk 4.000
-    set_max_delay -datapath_only -from $cmac_clk -to $axis_aclk 3.103
-}
+# set axis_aclk [get_clocks -of_object [get_nets u_top_wrapper/axis_aclk]]
+# foreach cmac_clk [get_clocks -of_object [get_nets u_top_wrapper/cmac_clk*]] {
+#     set_max_delay -datapath_only -from $axis_aclk -to $cmac_clk 4.000
+#     set_max_delay -datapath_only -from $cmac_clk -to $axis_aclk 3.103
+# }

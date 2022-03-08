@@ -34,6 +34,7 @@ set_property IOSTANDARD DIFF_SSTL12 [get_ports sysclk_p];
 create_clock -period  3.333 -name SYSCLK0_300 [get_ports sysclk_p]
 
 set_clock_groups -asynchronous -group [get_clocks SYSCLK0_300 -include_generated_clocks]
+
 #######################################################################
 # PCIe
 #######################################################################
@@ -133,6 +134,7 @@ set_property -dict { LOC T2 } [get_ports QSFP1_RX_P[1]]
 set_property -dict { LOC T1 } [get_ports QSFP1_RX_N[1]]
 set_property -dict { LOC U4 } [get_ports QSFP1_RX_P[0]]
 set_property -dict { LOC U3 } [get_ports QSFP1_RX_N[0]]
+
 ##########################################################################
 # Timing
 ##########################################################################
