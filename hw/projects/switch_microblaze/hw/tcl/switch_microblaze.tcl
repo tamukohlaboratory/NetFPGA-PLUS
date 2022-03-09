@@ -36,7 +36,7 @@ set repo_dir ./ip_repo
 set project_constraints "${public_repo_dir}/common/constraints/${board_name}_general.xdc"
 
 set start_time [exec date +%s]
-set_param general.maxThreads 8
+set_param general.maxThreads 32
 set_param synth.elaboration.rodinMoreOptions "rt::set_parameter max_loop_limit 200000"
 #####################################
 # Design Parameters on NF_DATAPATH

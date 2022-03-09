@@ -125,31 +125,31 @@ module top #(
 `endif /*BOARD_AU280*/
 
   /* clock infrastracture */
-  wire sys_clk;
-  wire sys_rst;
+  wire core_clk;
+  wire core_rst;
   wire locked;
 
   clk_wiz_ip u_clk_wiz_ip (
     .clk_in1_p (sysclk_p),
     .clk_in1_n (sysclk_n),
     .reset     (1'b0),
-    .clk_out1  (sys_clk),
+    .clk_out1  (core_clk),
     .locked    (locked)
   );
 
-  reg [9:0] sys_rst_cnt = 10'd0;
-  reg sys_rst_reg;
-  always @ (posedge sys_clk) begin
-    if (sys_rst_cnt != 10'h3ff) begin
-      sys_rst_cnt <= sys_rst_cnt + 10'd1;
-      sys_rst_reg <= 1'b1;
+  reg [9:0] core_rst_cnt = 10'd0;
+  reg core_rst_reg;
+  always @ (posedge core_clk) begin
+    if (core_rst_cnt != 10'h3ff) begin
+      core_rst_cnt <= core_rst_cnt + 10'd1;
+      core_rst_reg <= 1'b1;
     end
     else begin
-      sys_rst_reg <= 1'b0;
+      core_rst_reg <= 1'b0;
     end
   end
 
-  assign sys_rst = sys_rst_reg && locked;
+  assign core_rst = core_rst_reg && locked;
 
   wire axil_aclk;
   wire axil_rst;
@@ -225,8 +225,8 @@ module top #(
     .NUM_QUEUES(5)
   ) nf_datapath_0 (
     //Datapath clock
-    .axis_aclk   (sys_clk),
-    .axis_resetn (!sys_rst),
+    .axis_aclk   (core_clk),
+    .axis_resetn (!core_rst),
     //Registers clock
     .axi_aclk    (axil_aclk),
     .axi_resetn  (!axil_rst),
@@ -478,8 +478,8 @@ module top #(
     .axis_i_1_tready   (axis_i_1_tready),
     .axis_i_1_tlast    (axis_i_1_tlast ),
 
-    .core_clk           (sys_clk),
-    .core_rst           (sys_rst),
+    .core_clk           (core_clk),
+    .core_rst           (core_rst),
     .axis_aclk          (),
     .axis_rst           (),
     .axil_aclk          (axil_aclk),
