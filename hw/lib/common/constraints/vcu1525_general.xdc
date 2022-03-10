@@ -142,12 +142,7 @@ create_generated_clock -name dma_clk -source [get_pins u_nf_shell/xilinx_nic_she
 create_generated_clock -name mac0_clk -source [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[0].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_0_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_0_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[35].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/QPLL0CLK}] -master_clock [get_clocks qpll0outclk_out[0]] [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[0].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_0_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_0_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[35].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK}]
 create_generated_clock -name mac1_clk -source [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[1].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_1_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_1_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[36].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/QPLL0CLK}] -master_clock [get_clocks qpll0outclk_out[0]_1] [get_pins {u_nf_shell/xilinx_nic_shell/inst/cmac_port[1].cmac_subsystem_inst/cmac_wrapper_inst/cmac_inst/inst/cmac_usplus_1_gt_i/inst/gen_gtwizard_gtye4_top.cmac_usplus_1_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[36].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK}]
 
-set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks dma_clk]
-set_clock_groups -asynchronous -group [get_clocks dma_clk] -group [get_clocks sys_clk]
-set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks mac0_clk]
-set_clock_groups -asynchronous -group [get_clocks mac0_clk] -group [get_clocks sys_clk]
-set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks mac1_clk]
-set_clock_groups -asynchronous -group [get_clocks mac1_clk] -group [get_clocks sys_clk]
-
 set_clock_groups -asynchronous -group [get_clocks reg_clk] -group [get_clocks dma_clk]
-set_clock_groups -asynchronous -group [get_clocks dma_clk] -group [get_clocks reg_clk]
+set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks dma_clk]
+set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks mac0_clk]
+set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks mac1_clk]
