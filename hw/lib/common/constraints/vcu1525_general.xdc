@@ -150,3 +150,12 @@ set_clock_groups -asynchronous -group [get_clocks sys_clk] -group [get_clocks ma
 
 # # Unconfirmed
 # set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins u_nf_shell/xilinx_nic_shell/inst/qdma_subsystem_inst/qdma_wrapper_inst/qdma_inst/inst/pcie4_ip_i/inst/qdma_no_sriov_pcie4_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O]] -group [get_clocks {u_nf_shell/xilinx_nic_shell/inst/qdma_subsystem_inst/qdma_wrapper_inst/qdma_inst/inst/pcie4_ip_i/inst/qdma_no_sriov_pcie4_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/qdma_no_sriov_pcie4_ip_gt_i/inst/gen_gtwizard_gtye4_top.qdma_no_sriov_pcie4_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[32].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK}]
+
+set_false_path -through [get_ports pci_rst_n]
+
+set axis_aclk [get_clocks -of_object [get_nets u_nf_shell/xilinx_nic_shell/axis_aclk]]
+
+foreach cmac_clk [get_clocks -of_object [get_nets u_nf_shell/xilinx_nic_shell/cmac_clk*]] {
+	set_max_delay -datapath_only -from $axis_aclk -to $cmac_clk 4.000
+	set_max_delay -datapath_only -from $cmac_clk -to $axis_aclk 3.103
+}
